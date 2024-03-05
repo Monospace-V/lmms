@@ -933,10 +933,10 @@ GigInstrumentView::GigInstrumentView( Instrument * _instrument, QWidget * _paren
 
 	// LCDs
 	m_bankNumLcd = new LcdSpinBox( 3, "21pink", this );
-	m_bankNumLcd->move( 111, 150 );
+	m_bankNumLcd->move( 108, 150 );
 
 	m_patchNumLcd = new LcdSpinBox( 3, "21pink", this );
-	m_patchNumLcd->move( 161, 150 );
+	m_patchNumLcd->move( 158, 150 );
 
 	// Next row
 	m_filenameLabel = new QLabel( this );
