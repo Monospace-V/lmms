@@ -35,27 +35,27 @@ bool BandLimitedWave::s_wavesGenerated = false;
 QString BandLimitedWave::s_wavetableDir = "";
 
 
-QDataStream& operator<< ( QDataStream &out, WaveMipMap &waveMipMap )
+QDataStream& operator<< (QDataStream &out, WaveMipMap &waveMipMap)
 {
-	for( int tbl = 0; tbl <= MAXTBL; tbl++ )
+	for (int tbl = 0; tbl <= MAXTBL; tbl++)
 	{
-		for( int i = 0; i < TLENS[tbl]; i++ )
+		for (int i = 0; i < TLENS[tbl]; i++)
 		{
-			out << waveMipMap.sampleAt( tbl, i );
+			out << waveMipMap.sampleAt(tbl, i);
 		}
 	}
     return out;
 }
 
-QDataStream& operator>> ( QDataStream &in, WaveMipMap &waveMipMap )
+QDataStream& operator>> (QDataStream &in, WaveMipMap &waveMipMap)
 {
 	sample_t sample;
-	for( int tbl = 0; tbl <= MAXTBL; tbl++ )
+	for (int tbl = 0; tbl <= MAXTBL; tbl++)
 	{
-		for( int i = 0; i < TLENS[tbl]; i++ )
+		for (int i = 0; i < TLENS[tbl]; i++)
 		{
 			in >> sample;
-			waveMipMap.setSampleAt( tbl, i, sample );
+			waveMipMap.setSampleAt(tbl, i, sample);
 		}
 	}
     return in;
@@ -65,7 +65,7 @@ QDataStream& operator>> ( QDataStream &in, WaveMipMap &waveMipMap )
 void BandLimitedWave::generateWaves()
 {
 // don't generate if they already exist
-	if( s_wavesGenerated ) return;
+	if (s_wavesGenerated) return;
 
 	int i;
 
@@ -73,158 +73,158 @@ void BandLimitedWave::generateWaves()
 	s_wavetableDir = "data:wavetables/";
 
 // set wavetable files
-	QFile saw_file( s_wavetableDir + "saw.bin" );
-	QFile sqr_file( s_wavetableDir + "sqr.bin" );
-	QFile tri_file( s_wavetableDir + "tri.bin" );
-	QFile moog_file( s_wavetableDir + "moog.bin" );
+	QFile saw_file(s_wavetableDir + "saw.bin");
+	QFile sqr_file(s_wavetableDir + "sqr.bin");
+	QFile tri_file(s_wavetableDir + "tri.bin");
+	QFile moog_file(s_wavetableDir + "moog.bin");
 
 // saw wave - BLSaw
 // check for file and use it if exists
-	if( saw_file.exists() )
+	if (saw_file.exists())
 	{
-		saw_file.open( QIODevice::ReadOnly );
-		QDataStream in( &saw_file );
+		saw_file.open(QIODevice::ReadOnly);
+		QDataStream in(&saw_file);
 		in >> s_waveforms[static_cast<std::size_t>(BandLimitedWave::Waveform::BLSaw)];
 		saw_file.close();
 	}
 	else
 	{
-		for( i = 0; i <= MAXTBL; i++ )
+		for (i = 0; i <= MAXTBL; i++)
 		{
 			const int len = TLENS[i];
 			//const double om = 1.0 / len;
 			double max = 0.0;
 
-			for( int ph = 0; ph < len; ph++ )
+			for (int ph = 0; ph < len; ph++)
 			{
 				int harm = 1;
 				double s = 0.0f;
 				double hlen;
 				do
 				{
-					hlen = static_cast<double>( len ) / static_cast<double>( harm );
-					const double amp = -1.0 / static_cast<double>( harm );
-					//const double a2 = cos( om * harm * F_2PI );
-					s += amp * /*a2 **/sin( static_cast<double>( ph * harm ) / static_cast<double>( len ) * F_2PI );
+					hlen = static_cast<double>(len) / static_cast<double>(harm);
+					const double amp = -1.0 / static_cast<double>(harm);
+					//const double a2 = cos(om * harm * F_2PI);
+					s += amp * /*a2 **/sin(static_cast<double>(ph * harm) / static_cast<double>(len) * F_2PI);
 					harm++;
-				} while( hlen > 2.0 );
-				s_waveforms[static_cast<std::size_t>(BandLimitedWave::Waveform::BLSaw)].setSampleAt( i, ph, s );
+				} while (hlen > 2.0);
+				s_waveforms[static_cast<std::size_t>(BandLimitedWave::Waveform::BLSaw)].setSampleAt(i, ph, s);
 				max = std::max(max, std::abs(s));
 			}
 			// normalize
-			for( int ph = 0; ph < len; ph++ )
+			for (int ph = 0; ph < len; ph++)
 			{
-				sample_t s = s_waveforms[static_cast<std::size_t>(BandLimitedWave::Waveform::BLSaw)].sampleAt( i, ph ) / max;
-				s_waveforms[static_cast<std::size_t>(BandLimitedWave::Waveform::BLSaw)].setSampleAt( i, ph, s );
+				sample_t s = s_waveforms[static_cast<std::size_t>(BandLimitedWave::Waveform::BLSaw)].sampleAt(i, ph) / max;
+				s_waveforms[static_cast<std::size_t>(BandLimitedWave::Waveform::BLSaw)].setSampleAt(i, ph, s);
 			}
 		}
 	}
 
 // square wave - BLSquare
 // check for file and use it if exists
-	if( sqr_file.exists() )
+	if (sqr_file.exists())
 	{
-		sqr_file.open( QIODevice::ReadOnly );
-		QDataStream in( &sqr_file );
+		sqr_file.open(QIODevice::ReadOnly);
+		QDataStream in(&sqr_file);
 		in >> s_waveforms[static_cast<std::size_t>(BandLimitedWave::Waveform::BLSquare)];
 		sqr_file.close();
 	}
 	else
 	{
-		for( i = 0; i <= MAXTBL; i++ )
+		for (i = 0; i <= MAXTBL; i++)
 		{
 			const int len = TLENS[i];
 			//const double om = 1.0 / len;
 			double max = 0.0;
 
-			for( int ph = 0; ph < len; ph++ )
+			for (int ph = 0; ph < len; ph++)
 			{
 				int harm = 1;
 				double s = 0.0f;
 				double hlen;
 				do
 				{
-					hlen = static_cast<double>( len ) / static_cast<double>( harm );
-					const double amp = 1.0 / static_cast<double>( harm );
-					//const double a2 = cos( om * harm * F_2PI );
-					s += amp * /*a2 **/ sin( static_cast<double>( ph * harm ) / static_cast<double>( len ) * F_2PI );
+					hlen = static_cast<double>(len) / static_cast<double>(harm);
+					const double amp = 1.0 / static_cast<double>(harm);
+					//const double a2 = cos(om * harm * F_2PI);
+					s += amp * /*a2 **/ sin(static_cast<double>(ph * harm) / static_cast<double>(len) * F_2PI);
 					harm += 2;
-				} while( hlen > 2.0 );
-				s_waveforms[static_cast<std::size_t>(BandLimitedWave::Waveform::BLSquare)].setSampleAt( i, ph, s );
+				} while (hlen > 2.0);
+				s_waveforms[static_cast<std::size_t>(BandLimitedWave::Waveform::BLSquare)].setSampleAt(i, ph, s);
 				max = std::max(max, std::abs(s));
 			}
 			// normalize
-			for( int ph = 0; ph < len; ph++ )
+			for (int ph = 0; ph < len; ph++)
 			{
-				sample_t s = s_waveforms[static_cast<std::size_t>(BandLimitedWave::Waveform::BLSquare)].sampleAt( i, ph ) / max;
-				s_waveforms[static_cast<std::size_t>(BandLimitedWave::Waveform::BLSquare)].setSampleAt( i, ph, s );
+				sample_t s = s_waveforms[static_cast<std::size_t>(BandLimitedWave::Waveform::BLSquare)].sampleAt(i, ph) / max;
+				s_waveforms[static_cast<std::size_t>(BandLimitedWave::Waveform::BLSquare)].setSampleAt(i, ph, s);
 			}
 		}
 	}
 
 // triangle wave - BLTriangle
-	if( tri_file.exists() )
+	if (tri_file.exists())
 	{
-		tri_file.open( QIODevice::ReadOnly );
-		QDataStream in( &tri_file );
+		tri_file.open(QIODevice::ReadOnly);
+		QDataStream in(&tri_file);
 		in >> s_waveforms[static_cast<std::size_t>(BandLimitedWave::Waveform::BLTriangle)];
 		tri_file.close();
 	}
 	else
 	{
-		for( i = 0; i <= MAXTBL; i++ )
+		for (i = 0; i <= MAXTBL; i++)
 		{
 			const int len = TLENS[i];
 			//const double om = 1.0 / len;
 			double max = 0.0;
 
-			for( int ph = 0; ph < len; ph++ )
+			for (int ph = 0; ph < len; ph++)
 			{
 				int harm = 1;
 				double s = 0.0f;
 				double hlen;
 				do
 				{
-					hlen = static_cast<double>( len ) / static_cast<double>( harm );
-					const double amp = 1.0 / static_cast<double>( harm * harm );
-					//const double a2 = cos( om * harm * F_2PI );
-					s += amp * /*a2 **/ sin( ( static_cast<double>( ph * harm ) / static_cast<double>( len ) +
-							( ( harm + 1 ) % 4 == 0 ? 0.5 : 0.0 ) ) * F_2PI );
+					hlen = static_cast<double>(len) / static_cast<double>(harm);
+					const double amp = 1.0 / static_cast<double>(harm * harm);
+					//const double a2 = cos(om * harm * F_2PI);
+					s += amp * /*a2 **/ sin((static_cast<double>(ph * harm) / static_cast<double>(len) +
+							((harm + 1) % 4 == 0 ? 0.5 : 0.0)) * F_2PI);
 					harm += 2;
-				} while( hlen > 2.0 );
-				s_waveforms[static_cast<std::size_t>(BandLimitedWave::Waveform::BLTriangle)].setSampleAt( i, ph, s );
+				} while (hlen > 2.0);
+				s_waveforms[static_cast<std::size_t>(BandLimitedWave::Waveform::BLTriangle)].setSampleAt(i, ph, s);
 				max = std::max(max, std::abs(s));
 			}
 			// normalize
-			for( int ph = 0; ph < len; ph++ )
+			for (int ph = 0; ph < len; ph++)
 			{
-				sample_t s = s_waveforms[static_cast<std::size_t>(BandLimitedWave::Waveform::BLTriangle)].sampleAt( i, ph ) / max;
-				s_waveforms[static_cast<std::size_t>(BandLimitedWave::Waveform::BLTriangle)].setSampleAt( i, ph, s );
+				sample_t s = s_waveforms[static_cast<std::size_t>(BandLimitedWave::Waveform::BLTriangle)].sampleAt(i, ph) / max;
+				s_waveforms[static_cast<std::size_t>(BandLimitedWave::Waveform::BLTriangle)].setSampleAt(i, ph, s);
 			}
 		}
 	}
 
 // moog saw wave - BLMoog
 // basically, just add in triangle + 270-phase saw
-	if( moog_file.exists() )
+	if (moog_file.exists())
 	{
-		moog_file.open( QIODevice::ReadOnly );
-		QDataStream in( &moog_file );
+		moog_file.open(QIODevice::ReadOnly);
+		QDataStream in(&moog_file);
 		in >> s_waveforms[static_cast<std::size_t>(BandLimitedWave::Waveform::BLMoog)];
 		moog_file.close();
 	}
 	else
 	{
-		for( i = 0; i <= MAXTBL; i++ )
+		for (i = 0; i <= MAXTBL; i++)
 		{
 			const int len = TLENS[i];
 
-			for( int ph = 0; ph < len; ph++ )
+			for (int ph = 0; ph < len; ph++)
 			{
-				const int sawph = ( ph + static_cast<int>( len * 0.75 ) ) % len;
-				const sample_t saw = s_waveforms[static_cast<std::size_t>(BandLimitedWave::Waveform::BLSaw)].sampleAt( i, sawph );
-				const sample_t tri = s_waveforms[static_cast<std::size_t>(BandLimitedWave::Waveform::BLTriangle)].sampleAt( i, ph );
-				s_waveforms[static_cast<std::size_t>(BandLimitedWave::Waveform::BLMoog)].setSampleAt( i, ph, ( saw + tri ) * 0.5f );
+				const int sawph = (ph + static_cast<int>(len * 0.75)) % len;
+				const sample_t saw = s_waveforms[static_cast<std::size_t>(BandLimitedWave::Waveform::BLSaw)].sampleAt(i, sawph);
+				const sample_t tri = s_waveforms[static_cast<std::size_t>(BandLimitedWave::Waveform::BLTriangle)].sampleAt(i, ph);
+				s_waveforms[static_cast<std::size_t>(BandLimitedWave::Waveform::BLMoog)].setSampleAt(i, ph, (saw + tri) * 0.5f);
 			}
 		}
 	}
@@ -245,28 +245,28 @@ void BandLimitedWave::generateWaves()
 // can't use the usual wavetable directory here as it can require permissions on
 // some systems...
 
-QFile sawfile( "path-to-wavetables/saw.bin" );
-QFile sqrfile( "path-to-wavetables/sqr.bin" );
-QFile trifile( "path-to-wavetables/tri.bin" );
-QFile moogfile( "path-to-wavetables/moog.bin" );
+QFile sawfile("path-to-wavetables/saw.bin");
+QFile sqrfile("path-to-wavetables/sqr.bin");
+QFile trifile("path-to-wavetables/tri.bin");
+QFile moogfile("path-to-wavetables/moog.bin");
 
-sawfile.open( QIODevice::WriteOnly );
-QDataStream sawout( &sawfile );
+sawfile.open(QIODevice::WriteOnly);
+QDataStream sawout(&sawfile);
 sawout << s_waveforms[static_cast<std::size_t>(BandLimitedWave::Waveform::BLSaw)];
 sawfile.close();
 
-sqrfile.open( QIODevice::WriteOnly );
-QDataStream sqrout( &sqrfile );
+sqrfile.open(QIODevice::WriteOnly);
+QDataStream sqrout(&sqrfile);
 sqrout << s_waveforms[static_cast<std::size_t>(BandLimitedWave::Waveform::BLSquare)];
 sqrfile.close();
 
-trifile.open( QIODevice::WriteOnly );
-QDataStream triout( &trifile );
+trifile.open(QIODevice::WriteOnly);
+QDataStream triout(&trifile);
 triout << s_waveforms[static_cast<std::size_t>(BandLimitedWave::Waveform::BLTriangle)];
 trifile.close();
 
-moogfile.open( QIODevice::WriteOnly );
-QDataStream moogout( &moogfile );
+moogfile.open(QIODevice::WriteOnly);
+QDataStream moogout(&moogfile);
 moogout << s_waveforms[static_cast<std::size_t>(BandLimitedWave::Waveform::BLMoog)];
 moogfile.close();
 
