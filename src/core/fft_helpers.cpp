@@ -39,14 +39,14 @@ namespace lmms
  */
 float maximum(const float *abs_spectrum, unsigned int spec_size)
 {
-	if (abs_spectrum == nullptr) {return -1;}
-	if (spec_size == 0) {return -1;}
+	if (abs_spectrum == nullptr) { return -1; }
+	if (spec_size == 0) { return -1; }
 
 	float maxi = 0;
 
 	for (unsigned int i = 0; i < spec_size; i++)
 	{
-		if (abs_spectrum[i] > maxi) {maxi = abs_spectrum[i];}
+		if (abs_spectrum[i] > maxi) { maxi = abs_spectrum[i]; }
 	}
 	return maxi;
 }
@@ -64,8 +64,8 @@ float maximum(const std::vector<float> &abs_spectrum)
  */
 int normalize(const float *abs_spectrum, float *norm_spectrum, unsigned int bin_count, unsigned int block_size)
 {
-	if (abs_spectrum == nullptr || norm_spectrum == nullptr) {return -1;}
-	if (bin_count == 0 || block_size == 0) {return -1;}
+	if (abs_spectrum == nullptr || norm_spectrum == nullptr) { return -1; }
+	if (bin_count == 0 || block_size == 0) { return -1; }
 
 	block_size /= 2;
 	for (unsigned int i = 0; i < bin_count; i++)
@@ -77,7 +77,7 @@ int normalize(const float *abs_spectrum, float *norm_spectrum, unsigned int bin_
 
 int normalize(const std::vector<float> &abs_spectrum, std::vector<float> &norm_spectrum, unsigned int block_size)
 {
-	if (abs_spectrum.size() != norm_spectrum.size()) {return -1;}
+	if (abs_spectrum.size() != norm_spectrum.size()) { return -1; }
 
 	return normalize(abs_spectrum.data(), norm_spectrum.data(), abs_spectrum.size(), block_size);
 }
@@ -92,7 +92,7 @@ int notEmpty(const std::vector<float> &spectrum)
 {
 	for (float s : spectrum)
 	{
-		if (s != 0) {return 1;}
+		if (s != 0) { return 1; }
 	}
 	return 0;
 }
@@ -104,7 +104,7 @@ int notEmpty(const std::vector<float> &spectrum)
  */
 int precomputeWindow(float *window, unsigned int length, FFTWindow type, bool normalized)
 {
-	if (window == nullptr) {return -1;}
+	if (window == nullptr) { return -1; }
 
 	float gain = 0;
 	float a0;
@@ -118,7 +118,7 @@ int precomputeWindow(float *window, unsigned int length, FFTWindow type, bool no
 	{
 		default:
 		case FFTWindow::Rectangular:
-			for (unsigned int i = 0; i < length; i++) {window[i] = 1.0;}
+			for (unsigned int i = 0; i < length; i++) { window[i] = 1.0; }
 			gain = 1;
 			return 0;
 		case FFTWindow::BlackmanHarris:	
@@ -152,7 +152,7 @@ int precomputeWindow(float *window, unsigned int length, FFTWindow type, bool no
 
 	// apply amplitude correction
 	gain /= (float) length;
-	for (unsigned int i = 0; i < length; i++) {window[i] /= gain;}
+	for (unsigned int i = 0; i < length; i++) { window[i] /= gain; }
 
 	return 0;
 }
@@ -166,8 +166,8 @@ int precomputeWindow(float *window, unsigned int length, FFTWindow type, bool no
  */
 int absspec(const fftwf_complex *complex_buffer, float *absspec_buffer, unsigned int compl_length)
 {
-	if (complex_buffer == nullptr || absspec_buffer == nullptr) {return -1;}
-	if (compl_length == 0) {return -1;}
+	if (complex_buffer == nullptr || absspec_buffer == nullptr) { return -1; }
+	if (compl_length == 0) { return -1; }
 
 	for (unsigned int i = 0; i < compl_length; i++)
 	{
@@ -187,11 +187,11 @@ int absspec(const fftwf_complex *complex_buffer, float *absspec_buffer, unsigned
  */
 int compressbands(const float *absspec_buffer, float *compressedband, int num_old, int num_new, int bottom, int top)
 {
-	if (absspec_buffer == nullptr || compressedband == nullptr) {return -1;}
-	if (num_old < num_new) {return -1;}
-	if (num_old <= 0 || num_new <= 0) {return -1;}
-	if (bottom < 0) {bottom = 0;}
-	if (top >= num_old) {top = num_old - 1;}
+	if (absspec_buffer == nullptr || compressedband == nullptr) { return -1; }
+	if (num_old < num_new) { return -1; }
+	if (num_old <= 0 || num_new <= 0) { return -1; }
+	if (bottom < 0) { bottom = 0; }
+	if (top >= num_old) { top = num_old - 1; }
 
 	int usefromold = num_old - (num_old - top) - bottom;
 
@@ -204,7 +204,7 @@ int compressbands(const float *absspec_buffer, float *compressedband, int num_ol
 
 		float j_min = (i * ratio) + bottom;
 
-		if (j_min < 0) {j_min = bottom;}
+		if (j_min < 0) { j_min = bottom; }
 
 		float j_max = j_min + ratio;
 
