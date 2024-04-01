@@ -35,7 +35,7 @@ namespace lmms
 
 fpp_t BufferManager::s_framesPerPeriod;
 
-void BufferManager::init( fpp_t fpp )
+void BufferManager::init(fpp_t fpp)
 {
 	s_framesPerPeriod = fpp;
 }
@@ -43,26 +43,26 @@ void BufferManager::init( fpp_t fpp )
 
 sampleFrame * BufferManager::acquire()
 {
-	return MM_ALLOC<sampleFrame>( s_framesPerPeriod );
+	return MM_ALLOC<sampleFrame>(s_framesPerPeriod);
 }
 
-void BufferManager::clear( sampleFrame *ab, const f_cnt_t frames, const f_cnt_t offset )
+void BufferManager::clear(sampleFrame *ab, const f_cnt_t frames, const f_cnt_t offset)
 {
-	memset( ab + offset, 0, sizeof( *ab ) * frames );
+	memset(ab + offset, 0, sizeof(*ab) * frames);
 }
 
 #ifndef LMMS_DISABLE_SURROUND
-void BufferManager::clear( surroundSampleFrame * ab, const f_cnt_t frames,
-							const f_cnt_t offset )
+void BufferManager::clear(surroundSampleFrame * ab, const f_cnt_t frames,
+							const f_cnt_t offset)
 {
-	memset( ab + offset, 0, sizeof( *ab ) * frames );
+	memset(ab + offset, 0, sizeof(*ab) * frames);
 }
 #endif
 
 
-void BufferManager::release( sampleFrame * buf )
+void BufferManager::release(sampleFrame * buf)
 {
-	MM_FREE( buf );
+	MM_FREE(buf);
 }
 
 } // namespace lmms
